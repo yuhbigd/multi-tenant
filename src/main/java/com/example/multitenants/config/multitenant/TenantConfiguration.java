@@ -4,12 +4,10 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.sql.DataSource;
 
 import org.hibernate.context.spi.CurrentTenantIdentifierResolver;
-import org.hibernate.engine.jdbc.connections.spi.AbstractDataSourceBasedMultiTenantConnectionProviderImpl;
 import org.hibernate.engine.jdbc.connections.spi.MultiTenantConnectionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +23,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.example.multitenants.entity.tenant.Product;
-import com.example.multitenants.util.Tenant;
+import com.example.multitenants.util.CurrentTenant;
 
 import jakarta.persistence.EntityManagerFactory;
 
@@ -34,10 +32,6 @@ import jakarta.persistence.EntityManagerFactory;
 @EnableJpaRepositories(basePackages = {
         "com.example.multitenants.repository.tenant" }, entityManagerFactoryRef = "tenantEntityManagerFactory", transactionManagerRef = "tenantTransactionManager")
 public class TenantConfiguration {
-    @Bean
-    public Tenants tenants() {
-        return new Tenants(Set.of("tenant1", "tenant2"));
-    }
 
     @Bean("tenantDataSource")
     public DataSource masterDataSource() {
@@ -94,7 +88,7 @@ public class TenantConfiguration {
 
         @Override
         public String resolveCurrentTenantIdentifier() {
-            final var tenant = Optional.ofNullable(Tenant.get())
+            final var tenant = Optional.ofNullable(CurrentTenant.get())
                     .orElse(DEFAULT_SCHEMA);
             LOGGER.debug("Resolving tenant identifier (tenant={})", tenant);
             return tenant;

@@ -1,6 +1,6 @@
 package com.example.multitenants.util;
 
-public class Tenant {
+public class CurrentTenant {
     private static final ThreadLocal<String> CURRENT_TENANT = new ThreadLocal<>();
 
     public static String get() {
