@@ -1,0 +1,125 @@
+{
+	"info": {
+		"_postman_id": "5dfcc211-0be9-4b20-be3d-1cc7d6bd1330",
+		"name": "multi-tenant",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "17826226"
+	},
+	"item": [
+		{
+			"name": "tenant & master login",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJNWV9BUFAiLCJzdWIiOiJ0ZXN0MiIsInJvbGUiOlsiQURNSU4iXSwidGVuYW50IjoibWFzdGVyIiwiYXVkIjoiZnJvbnQtZW5kIiwiaWF0IjoxNzA1MTE2MjY4LCJleHAiOjE3MDU3MTYyNjh9.ka7nCJvt6y3BehZzdb6FPwAyT2H66Ma_2Y_8JC7CnU0"
+					}
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Tenant",
+						"value": "tenant2",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\":\"testtenant2\",\r\n    \"password\": \"123456789\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8080/login"
+			},
+			"response": []
+		},
+		{
+			"name": "master create new user in different tenant",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJNWV9BUFAiLCJzdWIiOiJ0ZXN0MiIsInJvbGUiOlsiQURNSU4iXSwidGVuYW50IjoibWFzdGVyIiwiYXVkIjoiZnJvbnQtZW5kIiwiaWF0IjoxNzA1MTE2MjY4LCJleHAiOjE3MDU3MTYyNjh9.ka7nCJvt6y3BehZzdb6FPwAyT2H66Ma_2Y_8JC7CnU0"
+					}
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Tenant",
+						"value": "master",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\":\"testtenant2\",\r\n    \"password\": \"123456789\",\r\n    \"role\" : [\r\n        \"ADMIN\",\r\n        \"USER\"\r\n    ],\r\n    \"tenant\": \"tenant2\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8080/master/user"
+			},
+			"response": []
+		},
+		{
+			"name": "tenant admin create user",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJNWV9BUFAiLCJzdWIiOiJ0ZXN0dGVuYW50MiIsInJvbGUiOlsiQURNSU4iLCJVU0VSIl0sInRlbmFudCI6InRlbmFudDIiLCJhdWQiOiJmcm9udC1lbmQiLCJpYXQiOjE3MDUxMTY1MDMsImV4cCI6MTcwNTcxNjUwM30.SqUc41xrRMLiQ36GSPXQwqxhusR5awyDcRfJSR7XEhc"
+					}
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Tenant",
+						"value": "master",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\":\"tet2\",\r\n    \"password\": \"123456789\",\r\n    \"role\" : [\r\n        \"ADMIN\"\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8080/user"
+			},
+			"response": []
+		},
+		{
+			"name": "create tenant product",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJNWV9BUFAiLCJzdWIiOiJ0ZXN0dGVuYW50MiIsInJvbGUiOlsiQURNSU4iLCJVU0VSIl0sInRlbmFudCI6InRlbmFudDIiLCJhdWQiOiJmcm9udC1lbmQiLCJpYXQiOjE3MDUxMTY1MDMsImV4cCI6MTcwNTcxNjUwM30.SqUc41xrRMLiQ36GSPXQwqxhusR5awyDcRfJSR7XEhc"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\":\"test\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8080/product"
+			},
+			"response": []
+		}
+	]
+}

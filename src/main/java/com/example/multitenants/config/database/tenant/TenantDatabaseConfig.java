@@ -1,4 +1,4 @@
-package com.example.multitenants.config.multitenant;
+package com.example.multitenants.config.database.tenant;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -30,8 +30,9 @@ import jakarta.persistence.EntityManagerFactory;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackages = {
-        "com.example.multitenants.repository.tenant" }, entityManagerFactoryRef = "tenantEntityManagerFactory", transactionManagerRef = "tenantTransactionManager")
-public class TenantConfiguration {
+        "com.example.multitenants.repository.tenant",
+        "com.example.multitenants.repository.common" }, entityManagerFactoryRef = "tenantEntityManagerFactory", transactionManagerRef = "tenantTransactionManager")
+public class TenantDatabaseConfig {
 
     @Bean("tenantDataSource")
     public DataSource masterDataSource() {
@@ -61,7 +62,8 @@ public class TenantConfiguration {
             CurrentTenantIdentifierResolver<String> currentTenantIdentifierResolverImpl) {
         final var entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
         entityManagerFactoryBean.setDataSource(dataSource);
-        entityManagerFactoryBean.setPackagesToScan(Product.class.getPackage().getName());
+        entityManagerFactoryBean.setPackagesToScan(Product.class.getPackage().getName(),
+                "com.example.multitenants.entity.common");
         entityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
         entityManagerFactoryBean.setJpaPropertyMap(Map.ofEntries(
                 Map.entry("hibernate.multiTenancy", "SCHEMA"),
@@ -84,7 +86,7 @@ public class TenantConfiguration {
 
     private static class TenantSchemaSelector implements CurrentTenantIdentifierResolver<String> {
         private static final Logger LOGGER = LoggerFactory.getLogger(TenantSchemaSelector.class);
-        private static final String DEFAULT_SCHEMA = "tenant1";
+        private static final String DEFAULT_SCHEMA = "master";
 
         @Override
         public String resolveCurrentTenantIdentifier() {

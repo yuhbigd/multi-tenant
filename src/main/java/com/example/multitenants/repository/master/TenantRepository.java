@@ -7,5 +7,5 @@ import com.example.multitenants.entity.master.TenantEntity;
 
 @Repository
 public interface TenantRepository extends JpaRepository<TenantEntity, Long> {
-
+    
 }

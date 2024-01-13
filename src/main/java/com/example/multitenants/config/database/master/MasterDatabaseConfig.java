@@ -1,4 +1,4 @@
-package com.example.multitenants.config.master;
+package com.example.multitenants.config.database.master;
 
 import java.util.Map;
 
@@ -25,7 +25,8 @@ import lombok.RequiredArgsConstructor;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackages = {
-        "com.example.multitenants.repository.master" }, transactionManagerRef = "masterTransactionManager", entityManagerFactoryRef = "masterEntityManager")
+        "com.example.multitenants.repository.master",
+        "com.example.multitenants.repository.common" }, transactionManagerRef = "masterTransactionManager", entityManagerFactoryRef = "masterEntityManager")
 @RequiredArgsConstructor
 public class MasterDatabaseConfig {
     private static final Logger LOG = LoggerFactory.getLogger(MasterDatabaseConfig.class);
@@ -47,7 +48,7 @@ public class MasterDatabaseConfig {
     public LocalContainerEntityManagerFactoryBean masterEntityManager() {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(masterDataSource());
-        em.setPackagesToScan(TenantEntity.class.getPackage().getName());
+        em.setPackagesToScan(TenantEntity.class.getPackage().getName(), "com.example.multitenants.entity.common");
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
         em.setJpaPropertyMap(Map.ofEntries(

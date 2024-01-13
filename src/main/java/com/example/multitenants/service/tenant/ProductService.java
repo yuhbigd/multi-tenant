@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.multitenants.entity.tenant.Product;
+import com.example.multitenants.model.req.CreateProductReq;
+import com.example.multitenants.model.res.CreateProductRes;
 import com.example.multitenants.repository.tenant.ProductRepository;
 
 import lombok.AllArgsConstructor;
@@ -14,7 +16,8 @@ public class ProductService {
     private ProductRepository productRepository;
 
     @Transactional("tenantTransactionManager")
-    public void addProduct(Product product) {
-        productRepository.save(product);
+    public CreateProductRes addProduct(CreateProductReq req) {
+        productRepository.save(Product.builder().name(req.getName()).build());
+        return CreateProductRes.builder().name(req.getName()).build();
     }
 }

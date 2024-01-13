@@ -16,4 +16,11 @@ application:
         tenant:
             locations: db/migration/tenant
         master:
-            locations: db/migration/master 
+            locations: db/migration/master
+    jwt:
+        secret: 51a0ab47b8037e2b635a280b409480ed
+        expiration: 600000000
+server:
+    error:
+        whitelabel:
+            enabled: true

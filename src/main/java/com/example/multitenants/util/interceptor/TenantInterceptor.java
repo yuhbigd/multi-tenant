@@ -1,4 +1,4 @@
-package com.example.multitenants.interceptor;
+package com.example.multitenants.util.interceptor;
 
 import com.example.multitenants.util.CurrentTenant;
 import com.example.multitenants.util.ExistedTenants;
@@ -31,15 +31,18 @@ public final class TenantInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws IOException {
-        final var xTenantName = request.getHeader(X_TENANT);
-        if (xTenantName == null) {
-            return respondMissingTenant(response);
+        if (request.getRequestURI().startsWith("/login")) {
+            final var xTenantName = request.getHeader(X_TENANT);
+            if (xTenantName == null) {
+                return selectTenantAndContinue("master");
+            }
+            var tenant = existedTenants.findTenant(xTenantName);
+            if (tenant.isEmpty()) {
+                return respondUnknownTenant(xTenantName, response);
+            }
+            return selectTenantAndContinue(tenant.get().getSchema());
         }
-        var tenant = existedTenants.findTenant(xTenantName);
-        // if (tenant.isEmpty()) {
-        //     return respondUnknownTenant(xTenantName, response);
-        // }
-        return selectTenantAndContinue(tenant.get().getSchema());
+        return true;
     }
 
     @Override
@@ -49,17 +52,6 @@ public final class TenantInterceptor implements HandlerInterceptor {
             ModelAndView modelAndView) {
         CurrentTenant.unset();
         LOGGER.debug("Removed tenant assigned previously before sending response to client");
-    }
-
-    private boolean respondMissingTenant(HttpServletResponse response) throws IOException {
-        final var problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-        problemDetail.setTitle("Missing database tenant");
-        problemDetail.setDetail("Header X-Tenant was not present in the request");
-
-        response.setStatus(HttpStatus.BAD_REQUEST.value());
-        response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-        response.getWriter().print(objectMapper.writeValueAsString(problemDetail));
-        return false;
     }
 
     private boolean respondUnknownTenant(String xTenantId, HttpServletResponse response) throws IOException {
